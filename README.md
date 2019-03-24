@@ -17,7 +17,6 @@ This Terraform module provisions a regional `GKE cluster`, `VPC`, and `Subnet`. 
   - [Optional Map Variables:](#optional-map-variables)
     - [`k8s_ip_ranges`](#k8s_ip_ranges)
     - [`k8s_options`](#k8s_options)
-    - [`deploy`](#deploy)
     - [`node_options`](#node_options)
     - [`node_pool_options`](#node_pool_options)
     - [`extras`](#extras)
@@ -217,15 +216,6 @@ Options to configure K8s. These include enabling the dashboard, network policies
 | `enable_pod_security_policy` | Whether to enable the PodSecurityPolicy controller for this cluster. | `true` |
 | `logging_service` | The logging service that the cluster should write logs to. | `none` |
 | `monitoring_service` | The monitoring service that the cluster should write metrics to. | `none` |
-
-#### `deploy`
-
-Optional K8s resources that can be deployed on the cluster after creation.
-
-| Variable              | Description                           | Default                                              |
-| :-------------------- | :------------------------------------ | :--------------------------------------------------- |
-| `network_policy`      | Whether to install a Network Policy to block access to the GCP Metadata API.        | `true` |
-| `pod_security_policy` | Whether to install PSPs to block running containers as root and using host network. | `true` |
 
 #### `node_options`
 
