@@ -2,9 +2,29 @@
 
 This Terraform module provisions a regional `GKE cluster`, `VPC`, and `Subnet`. Optionally, it can be configured to create a service account with limited permissions for the K8s Nodes if no `service_account` value is provided (see [Use Least Privilege Service Accounts for your Nodes](https://cloud.google.com/kubernetes-engine/docs/how-to/hardening-your-cluster#use_least_privilege_sa)).
 
-<!-- TOC depthFrom:2 -->autoauto- [Prerequisites](#prerequisites)auto- [Usage](#usage)auto  - [Basic Usage Example](#basic-usage-example)auto  - [Creating a Private Cluster](#creating-a-private-cluster)auto  - [Using the Cluster as a TF Provider](#using-the-cluster-as-a-tf-provider)auto  - [Upgrading a Cluster](#upgrading-a-cluster)auto    - [Update `k8s_version`](#update-k8s_version)auto    - [Update `node_version`](#update-node_version)auto- [Variables](#variables)auto  - [Required Variables](#required-variables)auto  - [Optional Variables](#optional-variables)auto  - [Optional List Variables](#optional-list-variables)auto  - [Optional Map Variables:](#optional-map-variables)auto    - [`k8s_ip_ranges`](#k8s_ip_ranges)auto    - [`k8s_options`](#k8s_options)auto    - [`deploy`](#deploy)auto    - [`node_options`](#node_options)auto    - [`node_pool_options`](#node_pool_options)auto    - [`extras`](#extras)auto    - [`timeouts`](#timeouts)auto  - [Output Variables](#output-variables)auto  - [Links](#links)autoauto<!-- /TOC -->
+- [Prerequisites](#prerequisites)
+- [Usage](#usage)
+  - [Basic Usage Example](#basic-usage-example)
+  - [Creating a Private Cluster](#creating-a-private-cluster)
+  - [Using the Cluster as a TF Provider](#using-the-cluster-as-a-tf-provider)
+  - [Upgrading a Cluster](#upgrading-a-cluster)
+    - [Update `k8s_version`](#update-k8s_version)
+    - [Update `node_version`](#update-node_version)
+- [Variables](#variables)
+  - [Required Variables](#required-variables)
+  - [Optional Variables](#optional-variables)
+  - [Optional List Variables](#optional-list-variables)
+  - [Optional Map Variables:](#optional-map-variables)
+    - [`k8s_ip_ranges`](#k8s_ip_ranges)
+    - [`k8s_options`](#k8s_options)
+    - [`deploy`](#deploy)
+    - [`node_options`](#node_options)
+    - [`node_pool_options`](#node_pool_options)
+    - [`extras`](#extras)
+    - [`timeouts`](#timeouts)
+  - [Output Variables](#output-variables)
+  - [Links](#links)
 
-<a id="markdown-prerequisites" name="prerequisites"></a>
 ## Prerequisites
 
 1. Ensure that you have a version of `terraform` that is at least `v0.11.9` (run `terraform version` to validate).
@@ -66,10 +86,8 @@ provider "google-beta" {
 }
 ```
 
-<a id="markdown-usage" name="usage"></a>
 ## Usage
 
-<a id="markdown-basic-usage-example" name="basic-usage-example"></a>
 ### Basic Usage Example
 
 ```hcl
@@ -84,7 +102,6 @@ module "k8s" {
 
 **NOTE:** All parameters are configurable. Please see [below](#variables) for information on each configuration option.
 
-<a id="markdown-creating-a-private-cluster" name="creating-a-private-cluster"></a>
 ### Creating a Private Cluster
 
 This module allows the creation of [Private GKE Clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters) where the nodes do not have public IP addresses. This is achieved using a [GCP Cloud NAT resource](https://cloud.google.com/nat/docs/overview?hl=en_US&_ga=2.47256615.-1497507305.1549638187).
@@ -93,7 +110,6 @@ If you were previously using the [NAT Gateway module](https://github.com/dansibl
 
 If you would prefer to keep using the old NAT Gateway module, you can pass the [`cloud_nat` variable](variables-main.tf#L57) to this module as `false`.
 
-<a id="markdown-using-the-cluster-as-a-tf-provider" name="using-the-cluster-as-a-tf-provider"></a>
 ### Using the Cluster as a TF Provider
 
 In the same terraform file, you can use the cluster this module creates by adding the following resources to your `main.tf` file:
@@ -113,30 +129,24 @@ provider "kubernetes" {
 
 This uses your local `gcloud` config to get an access token for the cluster. You can then create K8s resources (namespaces, deployments, pods, etc.) on the cluster from within the same Terraform plan.
 
-<a id="markdown-upgrading-a-cluster" name="upgrading-a-cluster"></a>
 ### Upgrading a Cluster
 
 The module exposes two variables to allow the separate upgrade of the control plane and nodes:
 
-<a id="markdown-update-k8s_version" name="update-k8s_version"></a>
 #### Update `k8s_version`
 
 This value configures the version of the Control Plane. It needs to be upgraded first. Generally this operation takes ~15 minutes. Once that is done, re-run `terraform plan` to validate that no further changes are needed by Terraform.
 
-<a id="markdown-update-node_version" name="update-node_version"></a>
 #### Update `node_version`
 
 Once the Control Plane has been updated, set this value to the Master version as you see it in GCP. You need to explicitly state the full version for the nodes (ie `1.11.5-gke.4`). If you don't provide the patch version, (ie, you only use `1.11`), this will cause a permadiff in Terraform.
 
 Finally, run `terraform apply`, and GCP will update the nodes one at a time. This operation can take some time depending on the size of your nodepool. If you find that Terraform times out, simply wait for the operation to complete in GCP and re-run `terraform plan` and `terraform apply` to reconcile the state. You can supply a higher timeout value if needed (the default is 30 minutes - see [timeouts](#timeouts)).
 
-<a id="markdown-variables" name="variables"></a>
 ## Variables
 
 For more info, please see the [variables file](variables-main.tf).
 
-
-<a id="markdown-required-variables" name="required-variables"></a>
 ### Required Variables
 
 | Variable  | Description                                  |
@@ -144,7 +154,6 @@ For more info, please see the [variables file](variables-main.tf).
 | `name`    | Name to use as a prefix to all the resources. |
 | `region`  | The region that hosts the cluster. Each node will be put in a different availability zone in the region for HA. |
 
-<a id="markdown-optional-variables" name="optional-variables"></a>
 ### Optional Variables
 
 | Variable               | Description                         | Default                                               |
@@ -162,7 +171,6 @@ For more info, please see the [variables file](variables-main.tf).
 | `cloud_nat` | Whether or not to enable Cloud NAT. This is to retain compatability with clusters that use the old NAT Gateway module. | `true` |
 | `nat_bgp_asn` | Local BGP Autonomous System Number (ASN) for the NAT router. | `64514` |
 
-<a id="markdown-optional-list-variables" name="optional-list-variables"></a>
 ### Optional List Variables
 | Variable                 | Description                            | Default                                               |
 | :----------------------- | :------------------------------------- | :---------------------------------------------------- |
@@ -173,7 +181,6 @@ For more info, please see the [variables file](variables-main.tf).
 | `client_certificate_config` | Whether client certificate authorization is enabled for this cluster. | `[]` |
 | `node_metadata` | [MAP] The metadata key/value pairs assigned to instances in the cluster. | `{}` |
 
-<a id="markdown-optional-map-variables" name="optional-map-variables"></a>
 ### Optional Map Variables:
 
 For maps, all values in each category need to be defined provided in the following format:
@@ -185,7 +192,6 @@ k8s_ip_ranges = {
 }
 ```
 
-<a id="markdown-k8s_ip_ranges" name="k8s_ip_ranges"></a>
 #### `k8s_ip_ranges`
 
 A map of the various IP ranges to use for K8s resources.
@@ -197,7 +203,6 @@ A map of the various IP ranges to use for K8s resources.
 | `svc_cidr`    | The IP address range of the kubernetes services in this cluster. | `10.190.16.0/20`   |
 | `node_cidr`   | The IP address range of the kubernetes nodes in this cluster.    | `10.190.0.0/22`   |
 
-<a id="markdown-k8s_options" name="k8s_options"></a>
 #### `k8s_options`
 
 Options to configure K8s. These include enabling the dashboard, network policies, monitoring and logging, etc.
@@ -213,7 +218,6 @@ Options to configure K8s. These include enabling the dashboard, network policies
 | `logging_service` | The logging service that the cluster should write logs to. | `none` |
 | `monitoring_service` | The monitoring service that the cluster should write metrics to. | `none` |
 
-<a id="markdown-deploy" name="deploy"></a>
 #### `deploy`
 
 Optional K8s resources that can be deployed on the cluster after creation.
@@ -223,7 +227,6 @@ Optional K8s resources that can be deployed on the cluster after creation.
 | `network_policy`      | Whether to install a Network Policy to block access to the GCP Metadata API.        | `true` |
 | `pod_security_policy` | Whether to install PSPs to block running containers as root and using host network. | `true` |
 
-<a id="markdown-node_options" name="node_options"></a>
 #### `node_options`
 
 Options to configure K8s Nodes. These include which OS to use, node sizes, etc.
@@ -236,7 +239,6 @@ Options to configure K8s Nodes. These include which OS to use, node sizes, etc.
 | `machine_type` | The machine type (RAM, CPU, etc) to use for each node.           | `n1-standard-1` |
 | `preemptible`  | Whether to create cheaper nodes that last a maximum of 24 hours. | `true`          |
 
-<a id="markdown-node_pool_options" name="node_pool_options"></a>
 #### `node_pool_options`
 
 Options to configure the default Node Pool created for the cluster.
@@ -249,7 +251,6 @@ Options to configure the default Node Pool created for the cluster.
 | `autoscaling_nodes_max` | Maximum number of nodes to create in each zone.        | `3`      |
 | `max_pods_per_node`     | The maximum number of pods per node in this node pool. | `110`    |
 
-<a id="markdown-extras" name="extras"></a>
 #### `extras`
 
 Extra options to configure K8s. These are options that are unlikely to change from deployment to deployment.
@@ -261,7 +262,6 @@ Extra options to configure K8s. These are options that are unlikely to change fr
 | `maintenance_start_time` | Time window specified for daily maintenance operations.                    | `01:00` |
 | `metadata_config`         | How to expose the node metadata to the workload running on the node.      | `SECURE` |
 
-<a id="markdown-timeouts" name="timeouts"></a>
 #### `timeouts`
 
 Configurable timeout values for the various cluster operations.
@@ -272,7 +272,6 @@ Configurable timeout values for the various cluster operations.
 | `update`  | The default timeout for a cluster update operation. | `30m` |
 | `delete`  | The default timeout for a cluster delete operation. | `20m` |
 
-<a id="markdown-output-variables" name="output-variables"></a>
 ### Output Variables
 
 | Variable                | Description                       |
@@ -290,7 +289,6 @@ Configurable timeout values for the various cluster operations.
 | `service_account`       | The email of the service account created by or supplied to this module. |
 | `service_account_key`   | The key for the service account created by this module. |
 
-<a id="markdown-links" name="links"></a>
 ### Links
 
 - https://www.terraform.io/docs/providers/google/r/container_cluster.html
