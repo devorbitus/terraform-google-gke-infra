@@ -105,7 +105,7 @@ module "k8s" {
 
 This module allows the creation of [Private GKE Clusters](https://cloud.google.com/kubernetes-engine/docs/how-to/private-clusters) where the nodes do not have public IP addresses. This is achieved using a [GCP Cloud NAT resource](https://cloud.google.com/nat/docs/overview?hl=en_US&_ga=2.47256615.-1497507305.1549638187).
 
-If you were previously using the [NAT Gateway module](https://github.com/dansible/terraform-google-nat-gateway) to create your private cluster, you will need to delete the module from your Terraform config and update this module to at least `v0.5.0`. Re-running `terraform apply` will destroy the old NAT gateway resources and spin up the Cloud NAT router.
+If you were previously using the [NAT Gateway module](https://registry.terraform.io/modules/GoogleCloudPlatform/nat-gateway/google/1.2.2) to create your private cluster, you will need to delete the module from your Terraform config and update this module to at least `v0.5.0`. Re-running `terraform apply` will destroy the old NAT gateway resources and spin up the Cloud NAT router.
 
 If you would prefer to keep using the old NAT Gateway module, you can pass the [`cloud_nat` variable](variables-main.tf#L57) to this module as `false`.
 
