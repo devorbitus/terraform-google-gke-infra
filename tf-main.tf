@@ -10,10 +10,10 @@ terraform {
 
 # Google Provider info
 ##########################################################
-provider "google" {
-  version = "~> 1.19"
-  region  = "${var.region}"
-}
+#provider "google" {
+#  version = "~> 1.19"
+#  region  = "${var.region}"
+#}
 
 # Get GCP metadata from local gcloud config
 ##########################################################
