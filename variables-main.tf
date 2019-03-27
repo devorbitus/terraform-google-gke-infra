@@ -50,8 +50,8 @@ variable "service_account" {
 }
 
 variable "remove_default_node_pool" {
-  description = "Whether to delete the default node pool on creation. Useful if you are adding a separate node pool resource. Defaults to false."
-  default     = false
+  description = "Whether to delete the default node pool on creation. Defaults to true"
+  default     = true
 }
 
 variable "cloud_nat" {

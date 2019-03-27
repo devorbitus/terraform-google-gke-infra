@@ -32,8 +32,8 @@ variable "k8s_options" {
 
 variable "deploy" {
   default = {
-      "foo" = "bar"
-    }  
+    "foo" = "bar"
+  }
 }
 
 # TODO

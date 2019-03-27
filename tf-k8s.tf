@@ -2,14 +2,14 @@
 ##########################################################
 resource "null_resource" "k8s_credentials" {
   count = 0
+
   #count = "${var.deploy["network_policy"] || var.deploy["pod_security_policy"] == 1 ? 1 : 0 }"
 
   triggers {
     host                   = "${md5(var.name)}"
     endpoint               = "${md5(google_container_cluster.cluster.endpoint)}"
-    cluster_ca_certificate  = "${md5(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
+    cluster_ca_certificate = "${md5(google_container_cluster.cluster.master_auth.0.cluster_ca_certificate)}"
   }
-
   provisioner "local-exec" {
     command = <<EOF
 set -o errexit
@@ -31,6 +31,8 @@ EOF
 ##########################################################
 # TODO
 
+
 # Apply PodSecurityPolicies
 ##########################################################
 # TODO
+

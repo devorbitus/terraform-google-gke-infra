@@ -166,7 +166,7 @@ For more info, please see the [variables file](variables-main.tf).
 | `gcloud_path` | The path to your gcloud client binary. | `gcloud` |
 | `service_account` | The service account to be used by the Node VMs. If not specified, a service account will be created with minimum permissions. | `""` |
 | `apply_network_policies` | Whether to apply Network Policies, CronJob and PSP resources to the GKE cluster. | `true` |
-| `remove_default_node_pool` | Whether to delete the default node pool on creation. | `false` |
+| `remove_default_node_pool` | Whether to delete the default node pool on creation. Sperate node pool is created by default so don't need default node pool | `true` |
 | `cloud_nat` | Whether or not to enable Cloud NAT. This is to retain compatability with clusters that use the old NAT Gateway module. | `true` |
 | `nat_bgp_asn` | Local BGP Autonomous System Number (ASN) for the NAT router. | `64514` |
 
