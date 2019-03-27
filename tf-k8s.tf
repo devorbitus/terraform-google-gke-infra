@@ -1,7 +1,8 @@
 # Setup cluster credentials
 ##########################################################
 resource "null_resource" "k8s_credentials" {
-  count = "${var.deploy["network_policy"] || var.deploy["pod_security_policy"] == 1 ? 1 : 0 }"
+  count = 0
+  #count = "${var.deploy["network_policy"] || var.deploy["pod_security_policy"] == 1 ? 1 : 0 }"
 
   triggers {
     host                   = "${md5(var.name)}"
