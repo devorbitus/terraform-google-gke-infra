@@ -1,9 +1,9 @@
 # Need to use Beta provider for private_cluster feature
 ##########################################################
-provider "google-beta" {
-  version = "~> 1.19"
-  region  = "${var.region}"
-}
+#provider "google-beta" {
+#  version = "~> 1.19"
+#  region  = "${var.region}"
+#}
 
 # GKE
 ##########################################################
