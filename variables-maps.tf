@@ -30,7 +30,9 @@ variable "k8s_options" {
   }
 }
 
-variable "deploy" {}
+variable "deploy" {
+  default = {}  
+}
 
 # TODO
 # variable "deploy" {
