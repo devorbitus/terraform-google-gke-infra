@@ -30,6 +30,8 @@ variable "k8s_options" {
   }
 }
 
+variable "deploy" {}
+
 # TODO
 # variable "deploy" {
 #   type        = "map"
