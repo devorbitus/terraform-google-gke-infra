@@ -278,6 +278,7 @@ Configurable timeout values for the various cluster operations.
 | `instace_urls`          | The unique URLs of the K8s Nodes in GCP. |
 | `service_account`       | The email of the service account created by or supplied to this module. |
 | `service_account_key`   | The key for the service account created by this module. |
+| `cloud_nat_adddress`    | The IP address of the cloud nat address created when private cluster is used with cloud nat. |
 
 ### Links
 
