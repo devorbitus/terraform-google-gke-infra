@@ -111,7 +111,7 @@ resource "google_container_node_pool" "primary_pool" {
     auto_upgrade = "${var.node_pool_options["auto_upgrade"]}"
   }
 
-  max_pods_per_node = "${var.node_pool_options["max_pods_per_node"]}"
+  #max_pods_per_node = "${var.node_pool_options["max_pods_per_node"]}"
 
   node_config {
     disk_size_gb = "${var.node_options["disk_size"]}"
@@ -141,8 +141,8 @@ resource "google_container_node_pool" "primary_pool" {
     #   value = ""
     #   effect = ""
     # }
-    workload_metadata_config = {
-      node_metadata = "${var.extras["metadata_config"]}"
-    }
+    # workload_metadata_config = {
+    #   node_metadata = "${var.extras["metadata_config"]}"
+    # }
   }
 }
