@@ -53,7 +53,7 @@ resource "google_container_cluster" "cluster" {
   }
 
   lifecycle {
-    ignore_changes = ["node_count", "node_pool", "network"]
+    ignore_changes = ["node_count", "node_pool", "network", "subnetwork"]
   }
 
   maintenance_policy {
