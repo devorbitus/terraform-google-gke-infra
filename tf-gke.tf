@@ -98,6 +98,7 @@ resource "google_container_node_pool" "primary_pool" {
   name               = "${var.name}-primary-pool"
   cluster            = "${google_container_cluster.cluster.name}"
   region             = "${var.region}"
+  project            = "${var.project}"
   initial_node_count = "${var.node_pool_options["autoscaling_nodes_min"]}"
 
   autoscaling {
