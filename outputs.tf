@@ -50,6 +50,10 @@ output "service_account_key" {
   value = "${var.service_account == "" ? element(concat(google_service_account_key.sa_key.*.private_key, list("")),0) : "" }" # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
 }
 
+output "cloud_nat_adddress" {
+  value = "${var.private_cluster == 1 && var.cloud_nat == 1 ? element(concat(google_compute_address.nat.*.address, list("")),0) : "" }" # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
+}
+
 # Render Kubeconfig output template
 locals {
   legacy_kubeconfig = <<KUBECONFIG
