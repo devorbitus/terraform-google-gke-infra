@@ -2,11 +2,9 @@
 ###############################
 variable "networks_that_can_access_k8s_api" {
   type        = "list"
-  description = "A list of networks that can access the K8s API. By default allows Montreal, Munich, Gliwice offices as well as Concourse and a few VPN networks."
+  description = "A list of networks that can access the K8s API in the form of a list of CIDR blocks in string form like [\"192.168.0.1/32\",\"127.1.1.1/32\"]"
 
-  default = [{
-    cidr_blocks = [{}]
-  }]
+  default = []
 }
 
 # List: Minimum GCP API privileges to allow to the nodes
