@@ -2,7 +2,7 @@
 ###############################
 variable "networks_that_can_access_k8s_api" {
   type        = "list"
-  description = "A list of networks that can access the K8s API in the form of a list of CIDR blocks in string form like [\"192.168.0.1/32\",\"127.1.1.1/32\"]"
+  description = "A list of networks that can access the K8s API in the form of a list of CIDR blocks in string form"
 
   default = []
 }
