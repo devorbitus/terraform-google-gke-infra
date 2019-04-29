@@ -21,7 +21,7 @@ resource "null_resource" "cidr_addresses" {
 locals {
   auth_networks_list_of_map="${zipmap(null_resource.cidr_addresses.*.triggers.cidr,local.networks)}"
   auth_networks_map="${map("cidr_blocks", local.auth_networks_list_of_map)}"
-  auth_networks=["${local.auth_networks_map}"]
+  auth_networks="${list(local.auth_networks_map)}"
 }
 
 # GKE
