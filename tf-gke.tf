@@ -5,6 +5,25 @@
 #  region  = "${var.region}"
 #}
 
+locals {
+  cidr_name="cidr_block"
+  networks="${concat(formatlist("%s/32",google_compute_address.nat.*.address),var.networks_that_can_access_k8s_api)}"
+}
+
+resource "null_resource" "cidr_addresses" {
+  count="${length(local.networks)}"
+
+  triggers {
+    cidr="cidr_block"
+  }
+}
+
+locals {
+  auth_networks_list_of_map="${zipmap(null_resource.cidr_addresses.*.cidr,local.networks)}"
+  auth_networks_map="${map("cidr_blocks", local.auth_networks_list_of_map)}"
+  auth_networks=["${local.auth_networks_map}"]
+}
+
 # GKE
 ##########################################################
 resource "google_container_cluster" "cluster" {
@@ -20,7 +39,7 @@ resource "google_container_cluster" "cluster" {
   enable_kubernetes_alpha           = "${var.extras["kubernetes_alpha"]}"
   enable_legacy_abac                = "${var.enable_legacy_kubeconfig}"
   logging_service                   = "${var.k8s_options["logging_service"]}"
-  master_authorized_networks_config = "${var.networks_that_can_access_k8s_api}"
+  master_authorized_networks_config = "${local.auth_networks}"
   master_ipv4_cidr_block            = "${var.k8s_ip_ranges["master_cidr"]}"
   min_master_version                = "${var.k8s_version}"
   monitoring_service                = "${var.k8s_options["monitoring_service"]}"
