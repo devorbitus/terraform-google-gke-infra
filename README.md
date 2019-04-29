@@ -173,7 +173,7 @@ For more info, please see the [variables file](variables-main.tf).
 ### Optional List Variables
 | Variable                 | Description                            | Default                                               |
 | :----------------------- | :------------------------------------- | :---------------------------------------------------- |
-| `networks_that_can_access_k8s_api` | A list of networks that can access the K8s API. By default allows Montreal, Munich, Gliwice offices as well as a few VPN networks. | [`see vars file`](variables-lists.tf) |
+| `networks_that_can_access_k8s_api` | A list of networks that can access the K8s API in the form of a list of CIDR blocks  in string form like `["192.168.0.1/32","127.1.1.1/32"]`| [`see vars file`](variables-lists.tf) |
 | `oauth_scopes` | The set of Google API scopes to be made available on all of the node VMs under the default service account. | [`see vars file`](variables-lists.tf) |
 | `node_tags` | The list of instance tags applied to all nodes. If none are provided, the cluster name is used by default. | `[]` |
 | `service_account_iam_roles` | A list of roles to apply to the service account if one is not provided. | [`see vars file`](variables-lists.tf) |
