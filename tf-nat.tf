@@ -10,7 +10,7 @@ resource "google_compute_address" "nat" {
 resource "google_compute_router" "router" {
   count       = (var.private_cluster && var.cloud_nat) ? 1 : 0
   name        = var.name
-  network     = google_compute_network.vpc.self_link
+  network     = (var.shared_vpc_name != "") ? data.google_compute_network.shared-network[0].self_link : google_compute_network.vpc[0].self_link
   project     = var.project
   region      = var.region
   description = var.description
@@ -49,7 +49,7 @@ resource "google_compute_route" "gtw_route" {
   name             = var.name
   depends_on       = [google_compute_subnetwork.subnet]
   dest_range       = google_container_cluster.cluster.endpoint
-  network          = google_compute_network.vpc.name
+  network          = google_compute_network.vpc[0].name
   next_hop_gateway = "default-internet-gateway"
   priority         = 700
   project          = var.project

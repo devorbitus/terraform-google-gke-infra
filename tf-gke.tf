@@ -4,6 +4,50 @@
 # GKE
 ##########################################################
 
+data "google_project" "shared_vpc_project" {
+  count      = (var.shared_vpc_project_name != "") ? 1 : 0
+  project_id = var.shared_vpc_project_name
+}
+
+data "google_project" "current_project" {
+}
+
+resource "google_compute_shared_vpc_service_project" "spinnaker" {
+  count           = (var.shared_vpc_name != "") ? 1 : 0
+  host_project    = var.shared_vpc_project_name
+  service_project = data.google_project.current_project.project_id
+}
+
+data "google_compute_network" "shared-network" {
+  count   = (var.shared_vpc_name != "") ? 1 : 0
+  name    = var.shared_vpc_name
+  project = var.shared_vpc_project_name
+}
+
+resource "google_project_iam_member" "container_engine_robot" {
+  count   = (var.shared_vpc_project_name != "") ? 1 : 0
+  project = var.shared_vpc_project_name
+  role    = "roles/compute.networkUser"
+  member  = join("", ["serviceAccount:service-", data.google_project.current_project.number, "@container-engine-robot.iam.gserviceaccount.com"])
+}
+
+resource "google_project_iam_member" "cloud_services_account" {
+  count   = (var.shared_vpc_project_name != "") ? 1 : 0
+  project = var.shared_vpc_project_name
+  role    = "roles/compute.networkUser"
+  member  = join("", ["serviceAccount:", data.google_project.current_project.number, "@cloudservices.gserviceaccount.com"])
+}
+
+resource "google_project_iam_binding" "host_service_agent_iam" {
+  count   = (var.shared_vpc_project_name != "") ? 1 : 0
+  project = var.shared_vpc_project_name
+  role    = "roles/container.hostServiceAgentUser"
+
+  members = [
+    join("", ["serviceAccount:service-", data.google_project.current_project.number, "@container-engine-robot.iam.gserviceaccount.com"]),
+  ]
+}
+
 locals {
   private_cluster = var.private_cluster ? ["private"] : []
 }
@@ -13,7 +57,7 @@ resource "google_container_cluster" "cluster" {
   name                        = var.name
   project                     = var.project
   region                      = var.region
-  network                     = google_compute_network.vpc.name # https://github.com/terraform-providers/terraform-provider-google/issues/1792
+  network                     = (var.shared_vpc_name != "") ? data.google_compute_network.shared-network[0].self_link : google_compute_network.vpc[0].self_link # https://github.com/terraform-providers/terraform-provider-google/issues/1792
   subnetwork                  = google_compute_subnetwork.subnet.self_link
   cluster_ipv4_cidr           = var.k8s_ip_ranges["pod_cidr"]
   description                 = var.description
@@ -115,6 +159,13 @@ resource "google_container_cluster" "cluster" {
     update = var.timeouts["update"]
     delete = var.timeouts["delete"]
   }
+
+  depends_on = [
+    google_project_iam_member.container_engine_robot,
+    google_project_iam_member.cloud_services_account,
+    google_project_iam_binding.host_service_agent_iam,
+    google_compute_shared_vpc_service_project.spinnaker,
+  ]
 }
 
 resource "google_container_node_pool" "primary_pool" {
@@ -156,7 +207,7 @@ resource "google_container_node_pool" "primary_pool" {
     # minimum_cpu_platform = "" # TODO
     oauth_scopes    = var.oauth_scopes
     preemptible     = var.node_options["preemptible"]
-    service_account = var.service_account == "" ? element(concat(google_service_account.sa.*.email, [""]), 0) : var.service_account # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
+    service_account = var.service_account == "" ? google_service_account.sa[0].email : var.service_account # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
     tags = split(
       ",",
       length(var.node_tags) == 0 ? var.name : join(",", var.node_tags),
@@ -172,5 +223,13 @@ resource "google_container_node_pool" "primary_pool" {
       node_metadata = var.extras["metadata_config"]
     }
   }
+
+  depends_on = [
+    google_project_iam_member.container_engine_robot,
+    google_project_iam_member.cloud_services_account,
+    google_project_iam_binding.host_service_agent_iam,
+    google_compute_shared_vpc_service_project.spinnaker,
+    google_compute_subnetwork.subnet
+  ]
 }
 

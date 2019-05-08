@@ -10,6 +10,7 @@ data "google_client_config" "gcloud" {
 # VPCs
 ##########################################################
 resource "google_compute_network" "vpc" {
+  count                   = (var.shared_vpc_name != "") ? 0 : 1
   name                    = var.name
   project                 = var.project
   auto_create_subnetworks = "false"
@@ -19,8 +20,8 @@ resource "google_compute_network" "vpc" {
 ##########################################################
 resource "google_compute_subnetwork" "subnet" {
   name                     = var.name
-  project                  = var.project
-  network                  = google_compute_network.vpc.name # https://github.com/terraform-providers/terraform-provider-google/issues/1792
+  project                  = (var.shared_vpc_name != "") ? var.shared_vpc_project_name : var.project
+  network                  = (var.shared_vpc_name != "") ? var.shared_vpc_name : google_compute_network.vpc[0].name # https://github.com/terraform-providers/terraform-provider-google/issues/1792
   region                   = var.region
   description              = var.description
   ip_cidr_range            = var.k8s_ip_ranges["node_cidr"]

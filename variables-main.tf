@@ -42,6 +42,18 @@ variable "gcloud_path" {
   default     = "gcloud"
 }
 
+variable "shared_vpc_name" {
+  type        = string
+  description = "Name of shared VPC to use instead of creating a new VPC in current project"
+  default     = ""
+}
+
+variable "shared_vpc_project_name" {
+  type        = string
+  description = "Name of shared VPC host project ID to use instead of creating a new VPC in current project"
+  default     = ""
+}
+
 variable "service_account" {
   description = "The service account to be used by the Node VMs. If not specified, a service account will be created with minimum permissions."
   default     = ""

@@ -27,11 +27,11 @@ output "client_key" {
 }
 
 output "network_name" {
-  value = google_compute_network.vpc.name
+  value = (var.shared_vpc_name != "") ? var.shared_vpc_name : google_compute_network.vpc[0].name
 }
 
 output "network_link" {
-  value = google_compute_network.vpc.self_link
+  value = (var.shared_vpc_name != "") ? data.google_compute_network.shared-network[0].self_link : google_compute_network.vpc[0].self_link
 }
 
 output "subnet_name" {
