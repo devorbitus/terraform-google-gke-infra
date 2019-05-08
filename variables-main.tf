@@ -64,8 +64,9 @@ variable "remove_default_node_pool" {
 }
 
 variable "cloud_nat" {
-  type = bool
+  type        = bool
   description = "Whether or not to enable Cloud NAT. This is to retain compatability with clusters that use the old NAT Gateway module."
+  default     = true
 }
 
 variable "nat_bgp_asn" {
