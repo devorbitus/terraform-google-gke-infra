@@ -7,6 +7,7 @@ resource "google_compute_address" "nat" {
 }
 
 data "google_compute_address" "existing_nat" {
+  count = var.cloud_nat_address_name != "" ? 1 : 0
   name = var.cloud_nat_address_name
 }
 
@@ -31,7 +32,7 @@ resource "google_compute_router_nat" "nat" {
   router                             = google_compute_router.router[0].name
   region                             = var.region
   nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = flatten([[google_compute_address.nat[0].self_link], [data.google_compute_address.existing_nat.self_link]])
+  nat_ips                            = compact(flatten([[google_compute_address.nat[0].self_link], [data.google_compute_address.existing_nat[0].self_link]]))
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
   subnetwork {
