@@ -1,37 +1,37 @@
 # Create an external NAT IP
 resource "google_compute_address" "nat" {
-  count   = "${var.private_cluster == 1 && var.cloud_nat == 1 ? 1: 0 }"
+  count   = (var.private_cluster && var.cloud_nat) ? 1 : 0
   name    = "${var.name}-nat"
-  project = "${var.project}"
-  region  = "${var.region}"
+  project = var.project
+  region  = var.region
 }
 
 # Create a NAT router so the nodes can reach DockerHub, etc
 resource "google_compute_router" "router" {
-  count       = "${var.private_cluster == 1 && var.cloud_nat == 1 ? 1: 0 }"
-  name        = "${var.name}"
-  network     = "${google_compute_network.vpc.self_link}"
-  project     = "${var.project}"
-  region      = "${var.region}"
-  description = "${var.description}"
+  count       = (var.private_cluster && var.cloud_nat) ? 1 : 0
+  name        = var.name
+  network     = google_compute_network.vpc.self_link
+  project     = var.project
+  region      = var.region
+  description = var.description
 
   bgp {
-    asn = "${var.nat_bgp_asn}"
+    asn = var.nat_bgp_asn
   }
 }
 
 resource "google_compute_router_nat" "nat" {
-  count                              = "${var.private_cluster == 1 && var.cloud_nat == 1 ? 1: 0 }"
-  name                               = "${var.name}"
-  project                            = "${var.project}"
-  router                             = "${google_compute_router.router.name}"
-  region                             = "${var.region}"
+  count                              = (var.private_cluster && var.cloud_nat) ? 1 : 0
+  name                               = var.name
+  project                            = var.project
+  router                             = google_compute_router.router[0].name
+  region                             = var.region
   nat_ip_allocate_option             = "MANUAL_ONLY"
-  nat_ips                            = ["${google_compute_address.nat.self_link}"]
+  nat_ips                            = [google_compute_address.nat[0].self_link]
   source_subnetwork_ip_ranges_to_nat = "LIST_OF_SUBNETWORKS"
 
   subnetwork {
-    name                    = "${google_compute_subnetwork.subnet.self_link}"
+    name                    = google_compute_subnetwork.subnet.self_link
     source_ip_ranges_to_nat = ["PRIMARY_IP_RANGE", "LIST_OF_SECONDARY_IP_RANGES"]
 
     secondary_ip_range_names = [
@@ -45,13 +45,17 @@ resource "google_compute_router_nat" "nat" {
 # Route traffic to the Masters through the default gateway. This fixes things like kubectl exec and logs
 ##########################################################
 resource "google_compute_route" "gtw_route" {
-  count            = "${var.private_cluster == 1 && var.cloud_nat == 0 ? 1 : 0 }"
-  name             = "${var.name}"
-  depends_on       = ["google_compute_subnetwork.subnet"]
-  dest_range       = "${google_container_cluster.cluster.endpoint}"
-  network          = "${google_compute_network.vpc.name}"
+  count            = (var.private_cluster && var.cloud_nat) ? 1 : 0
+  name             = var.name
+  depends_on       = [google_compute_subnetwork.subnet]
+  dest_range       = google_container_cluster.cluster.endpoint
+  network          = google_compute_network.vpc.name
   next_hop_gateway = "default-internet-gateway"
   priority         = 700
-  project          = "${var.project}"
-  tags             = "${split(",", length(var.node_tags) == 0 ? var.name : join(",", var.node_tags))}"
+  project          = var.project
+  tags = split(
+    ",",
+    length(var.node_tags) == 0 ? var.name : join(",", var.node_tags),
+  )
 }
+

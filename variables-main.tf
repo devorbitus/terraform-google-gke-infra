@@ -12,7 +12,6 @@ variable "region" {
 ##########################################################
 variable "project" {
   description = "The ID of the google project to which the resource belongs."
-  default     = ""
 }
 
 variable "description" {
@@ -26,7 +25,7 @@ variable "enable_legacy_kubeconfig" {
 
 variable "k8s_version" {
   description = "Default K8s version for the Control Plane. See: https://www.terraform.io/docs/providers/google/r/container_cluster.html#min_master_version"
-  default     = "1.12"
+  default     = ""
 }
 
 variable "node_version" {
@@ -36,7 +35,6 @@ variable "node_version" {
 
 variable "private_cluster" {
   description = "If true, a private cluster will be created, meaning nodes do not get public IP addresses. It is mandatory to specify master_ipv4_cidr_block and ip_allocation_policy with this option."
-  default     = false
 }
 
 variable "gcloud_path" {
@@ -56,10 +54,10 @@ variable "remove_default_node_pool" {
 
 variable "cloud_nat" {
   description = "Whether or not to enable Cloud NAT. This is to retain compatability with clusters that use the old NAT Gateway module."
-  default     = true
 }
 
 variable "nat_bgp_asn" {
   description = "Local BGP Autonomous System Number (ASN). Must be an RFC6996 private ASN, either 16-bit or 32-bit. The value will be fixed for this router resource. All VPN tunnels that link to this router will have the same local ASN."
   default     = "64514"
 }
+

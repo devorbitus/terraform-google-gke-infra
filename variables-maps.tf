@@ -1,12 +1,12 @@
 # Map: K8s IP ranges
 ###############################
 variable "k8s_ip_ranges" {
-  type        = "map"
+  type        = map(string)
   description = "See recommended IP range sizing: https://cloud.google.com/kubernetes-engine/docs/how-to/alias-ips#defaults_limits"
 
   default = {
-    master_cidr = "172.16.0.0/28"  # Specifies a private RFC1918 block for the master's VPC. The master range must not overlap with any subnet in your cluster's VPC. The master and your cluster use VPC peering. Must be specified in CIDR notation and must be /28 subnet. See: https://www.terraform.io/docs/providers/google/r/container_cluster.html#master_ipv4_cidr_block 10.0.82.0/28
-    pod_cidr    = "10.60.0.0/14"   # The IP address range of the kubernetes pods in this cluster.
+    master_cidr = "172.16.0.0/28" # Specifies a private RFC1918 block for the master's VPC. The master range must not overlap with any subnet in your cluster's VPC. The master and your cluster use VPC peering. Must be specified in CIDR notation and must be /28 subnet. See: https://www.terraform.io/docs/providers/google/r/container_cluster.html#master_ipv4_cidr_block 10.0.82.0/28
+    pod_cidr    = "10.60.0.0/14"  # The IP address range of the kubernetes pods in this cluster.
     svc_cidr    = "10.190.16.0/20"
     node_cidr   = "10.190.0.0/22"
   }
@@ -15,7 +15,7 @@ variable "k8s_ip_ranges" {
 # Map: K8s Control Plane Options
 ###############################
 variable "k8s_options" {
-  type        = "map"
+  type        = map(string)
   description = "Extra options to configure K8s. All options must be specified when passed as a map variable input to this module."
 
   default = {
@@ -50,7 +50,7 @@ variable "deploy" {
 # Map: K8s Node Options
 ###############################
 variable "node_options" {
-  type        = "map"
+  type        = map(string)
   description = "Extra options to configure the K8s Nodes. All options must be specified when passed as a map variable input to this module."
 
   default = {
@@ -65,7 +65,7 @@ variable "node_options" {
 # Map: Node Pool options
 ###############################
 variable "node_pool_options" {
-  type        = "map"
+  type        = map(string)
   description = "Options to configure the default Node Pool created for the cluster."
 
   default = {
@@ -80,7 +80,7 @@ variable "node_pool_options" {
 # Map: Extra Options
 ###############################
 variable "extras" {
-  type        = "map"
+  type        = map(string)
   description = "Extra options to configure K8s. These are options that are unlikely to change from deployment to deployment. All options must be specified when passed as a map variable input to this module."
 
   default = {
@@ -88,16 +88,15 @@ variable "extras" {
     local_ssd_count        = 0        # The amount of local SSD disks that will be attached to each cluster node.
     maintenance_start_time = "01:00"  # Time window specified for daily maintenance operations. Specify start_time in RFC3339 format "HH:MM”, where HH : [00-23] and MM : [00-59] GMT.
     metadata_config        = "SECURE" # How to expose the node metadata to the workload running on the node. See: https://www.terraform.io/docs/providers/google/r/container_cluster.html#node_metadata
-
-    # guest_accelerator  = ""       # The accelerator type resource to expose to this instance. E.g. nvidia-tesla-k80. If unset will not attach an accelerator.
-    # min_cpu_platform = "" # Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform. Applicable values are the friendly names of CPU platforms, such as Intel Haswell.
   }
+  # guest_accelerator  = ""       # The accelerator type resource to expose to this instance. E.g. nvidia-tesla-k80. If unset will not attach an accelerator.
+  # min_cpu_platform = "" # Minimum CPU platform to be used by this instance. The instance may be scheduled on the specified or newer CPU platform. Applicable values are the friendly names of CPU platforms, such as Intel Haswell.
 }
 
 # Map: Timeouts
 ###############################
 variable "timeouts" {
-  type        = "map"
+  type        = map(string)
   description = "Configurable timeout values for the various cluster operations."
 
   default = {
@@ -110,7 +109,9 @@ variable "timeouts" {
 # Map: Key-Value pairs to assign to Node metadata
 ###############################
 variable "node_metadata" {
-  type        = "map"
-  default     = {}
+  type = map(string)
+  default = {
+  }
   description = "The metadata key/value pairs assigned to instances in the cluster. Used for pushing ssh keys to Nodes."
 }
+
