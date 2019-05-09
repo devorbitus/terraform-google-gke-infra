@@ -6,6 +6,7 @@
 
 locals {
   private_cluster = var.private_cluster ? ["private"] : []
+  auth_list = (var.cloud_nat_address_name != "") ? compact(flatten([formatlist("%s/32", [data.google_compute_address.existing_nat[0].address]), var.networks_that_can_access_k8s_api])) : compact(flatten([formatlist("%s/32", google_compute_address.nat.*.address), var.networks_that_can_access_k8s_api]))
 }
 
 resource "google_container_cluster" "cluster" {
@@ -23,7 +24,7 @@ resource "google_container_cluster" "cluster" {
   logging_service             = var.k8s_options["logging_service"]
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
-      for_each = compact(flatten([formatlist("%s/32", google_compute_address.nat.*.address),[formatlist("%s/32", [data.google_compute_address.existing_nat[0].address])], var.networks_that_can_access_k8s_api]))
+      for_each = local.auth_list
       content {
         cidr_block = cidr_blocks.value
       }
