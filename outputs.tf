@@ -47,18 +47,15 @@ output "instace_urls" {
 }
 
 output "service_account" {
-  value = var.service_account == "" ? element(concat(google_service_account.sa.*.email, [""]), 0) : var.service_account # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
+  value = var.service_account == "" ? google_service_account.sa[0].email : var.service_account
 }
 
 output "service_account_key" {
-  value = var.service_account == "" ? element(
-    concat(google_service_account_key.sa_key.*.private_key, [""]),
-    0,
-  ) : "" # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
+  value = var.service_account == "" ? google_service_account_key.sa_key[0].private_key : "" 
 }
 
 output "cloud_nat_adddress" {
-  value = (var.private_cluster && var.cloud_nat) ? element(concat(google_compute_address.nat.*.address, [""]), 0) : "" # See here for explanation of ugly syntax: https://www.terraform.io/upgrade-guides/0-11.html#referencing-attributes-from-resources-with-count-0
+  value = (var.private_cluster && var.cloud_nat && var.cloud_nat_address_name != "") ? google_compute_address.nat[0].address : data.google_compute_address.existing_nat[0].address
 }
 
 # Render Kubeconfig output template
