@@ -6,7 +6,7 @@
 
 locals {
   private_cluster = var.private_cluster ? ["private"] : []
-  auth_list = (var.cloud_nat_address_name != "") ? compact(flatten([formatlist("%s/32", [data.google_compute_address.existing_nat[0].address]), var.networks_that_can_access_k8s_api])) : compact(flatten([formatlist("%s/32", google_compute_address.nat.*.address), var.networks_that_can_access_k8s_api]))
+  auth_list = (var.cloud_nat_address_name != "") ? flatten([var.networks_that_can_access_k8s_api, formatlist("%s/32", data.google_compute_address.existing_nat[0].address)]) : flatten([var.networks_that_can_access_k8s_api, formatlist("%s/32", google_compute_address.nat.*.address)])
 }
 
 resource "google_container_cluster" "cluster" {
