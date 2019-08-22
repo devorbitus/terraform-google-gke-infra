@@ -142,6 +142,7 @@ resource "google_container_node_pool" "primary_pool" {
   cluster            = google_container_cluster.cluster.name
   location           = var.region
   project            = var.project
+  version            = var.node_version == "" ? data.google_container_engine_versions.node.latest_node_version : var.node_version
   initial_node_count = var.node_pool_options["autoscaling_nodes_min"]
 
   autoscaling {
