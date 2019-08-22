@@ -34,10 +34,21 @@ variable "k8s_version" {
   default     = ""
 }
 
+variable "k8s_version_prefix" {
+  type        = string
+  description = "If provided and k8s_version is NOT provided, Terraform will only return versions that match the string prefix. For example, 1.11. will match all 1.11 series releases. Since this is just a string match, it's recommended that you append a . after minor versions to ensure that prefixes such as 1.1 don't match versions like 1.12.5-gke.10 accidentally. See the docs on versioning schema for full details on how version strings are formatted."
+  default     = ""
+}
+
 variable "node_version" {
   type        = string
   description = "K8s version for Nodes. If no value is provided, this defaults to the value of k8s_version."
   default     = ""
+}
+
+variable "node_version_prefix" {
+  type        = string
+  description = "If provided and node_version is NOT provided, Terraform will only return versions that match the string prefix. For example, 1.11. will match all 1.11 series releases. Since this is just a string match, it's recommended that you append a . after minor versions to ensure that prefixes such as 1.1 don't match versions like 1.12.5-gke.10 accidentally. See the docs on versioning schema for full details on how version strings are formatted."
 }
 
 variable "private_cluster" {

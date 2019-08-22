@@ -51,7 +51,7 @@ output "service_account" {
 }
 
 output "service_account_key" {
-  value = var.service_account == "" ? google_service_account_key.sa_key[0].private_key : "" 
+  value = var.service_account == "" ? google_service_account_key.sa_key[0].private_key : ""
 }
 
 output "cloud_nat_adddress" {
