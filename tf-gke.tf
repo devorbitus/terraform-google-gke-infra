@@ -9,6 +9,9 @@ locals {
   auth_list       = (var.cloud_nat_address_name != "") ? flatten([var.networks_that_can_access_k8s_api, formatlist("%s/32", data.google_compute_address.existing_nat[0].address)]) : flatten([var.networks_that_can_access_k8s_api, formatlist("%s/32", google_compute_address.nat.*.address)])
 }
 
+data "google_project" "project" {
+}
+
 data "google_container_engine_versions" "node" {
   location       = var.region
   version_prefix = var.node_version_prefix
@@ -20,12 +23,15 @@ data "google_container_engine_versions" "master" {
 }
 
 resource "google_container_cluster" "cluster" {
-  provider                    = google-beta
-  name                        = var.name
-  project                     = var.project
-  region                      = var.region
-  network                     = google_compute_network.vpc.name # https://github.com/terraform-providers/terraform-provider-google/issues/1792
-  subnetwork                  = google_compute_subnetwork.subnet.self_link
+  provider   = google-beta
+  name       = var.name
+  project    = var.project
+  location   = var.region
+  network    = google_compute_network.vpc.name # https://github.com/terraform-providers/terraform-provider-google/issues/1792
+  subnetwork = google_compute_subnetwork.subnet.self_link
+  workload_identity_config {
+    identity_namespace = "${data.google_project.project.project_id}.svc.id.goog"
+  }
   cluster_ipv4_cidr           = var.k8s_ip_ranges["pod_cidr"]
   description                 = var.description
   enable_binary_authorization = var.k8s_options["binary_authorization"]
@@ -42,6 +48,8 @@ resource "google_container_cluster" "cluster" {
       }
     }
   }
+
+
 
   monitoring_service = var.k8s_options["monitoring_service"]
 
@@ -132,7 +140,7 @@ resource "google_container_node_pool" "primary_pool" {
   provider           = google-beta
   name               = "${var.name}-primary-pool"
   cluster            = google_container_cluster.cluster.name
-  region             = var.region
+  location           = var.region
   project            = var.project
   initial_node_count = var.node_pool_options["autoscaling_nodes_min"]
 

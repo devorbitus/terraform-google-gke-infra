@@ -142,6 +142,10 @@ Once the Control Plane has been updated, set this value to the Master version as
 
 Finally, run `terraform apply`, and GCP will update the nodes one at a time. This operation can take some time depending on the size of your nodepool. If you find that Terraform times out, simply wait for the operation to complete in GCP and re-run `terraform plan` and `terraform apply` to reconcile the state. You can supply a higher timeout value if needed (the default is 30 minutes - see [timeouts](#timeouts)).
 
+## Workload Identity Config
+
+Clusters will be created with Google's Workload Identity enabled in order to better secure service accounts while [authorizing to Google APIs](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) because the current alternatives [have significant drawbacks](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity#alternatives).
+
 ## Variables
 
 For more info, please see the [variables file](variables-main.tf).
