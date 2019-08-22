@@ -38,7 +38,7 @@ resource "google_container_cluster" "cluster" {
   enable_kubernetes_alpha     = var.extras["kubernetes_alpha"]
   enable_legacy_abac          = var.enable_legacy_kubeconfig
   logging_service             = var.k8s_options["logging_service"]
-  node_version                = var.node_version == "" ? data.google_container_engine_versions.node.latest_node_version : var.node_version
+  #node_version                = var.node_version == "" ? data.google_container_engine_versions.node.latest_node_version : var.node_version
   min_master_version          = var.k8s_version == "" ? data.google_container_engine_versions.master.latest_master_version : var.k8s_version
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
