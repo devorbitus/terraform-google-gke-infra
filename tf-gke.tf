@@ -187,6 +187,10 @@ resource "google_container_node_pool" "primary_pool" {
       node_metadata = var.extras["metadata_config"]
     }
   }
+  
+  provisioner "local-exec" {
+    command = "sleep 30"
+  }
 }
 
 provider "kubernetes" {
