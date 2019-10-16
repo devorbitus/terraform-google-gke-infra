@@ -189,3 +189,22 @@ resource "google_container_node_pool" "primary_pool" {
   }
 }
 
+provider "kubernetes" {
+  alias                  = "innermodule"
+  load_config_file       = false
+  host                   = google_container_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(google_container_cluster.cluster.cluster_ca_certificate)
+  token                  = data.google_client_config.gcloud.access_token
+}
+
+resource "kubernetes_namespace" "create_namespace" {
+  count = var.create_namespace != "default" ? 1 : 0
+  provider = kubernetes.innermodule
+  metadata {
+    name = var.create_namespace
+  }
+  # Adding dependancy on the node pool so that destroy works properly
+  depends_on: [
+    google_container_node_pool.primary_pool
+  ]
+}

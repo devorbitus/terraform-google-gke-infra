@@ -175,6 +175,7 @@ For more info, please see the [variables file](variables-main.tf).
 | `remove_default_node_pool` | Whether to delete the default node pool on creation. Sperate node pool is created by default so don't need default node pool | `true` |
 | `cloud_nat` | Whether or not to enable Cloud NAT. This is to retain compatability with clusters that use the old NAT Gateway module. | `true` |
 | `nat_bgp_asn` | Local BGP Autonomous System Number (ASN) for the NAT router. | `64514` |
+| `create_namespace` | Kubernetes Namespace to create if given and different than default. | `default`|
 
 ### Optional List Variables
 | Variable                 | Description                            | Default                                               |

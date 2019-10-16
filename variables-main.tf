@@ -93,3 +93,9 @@ variable "nat_bgp_asn" {
   default     = "64514"
 }
 
+variable "create_namespace" {
+  type        = string
+  description = "Namespace to create if given and different than default"
+  default     = "default"
+}
+
