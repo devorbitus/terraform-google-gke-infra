@@ -204,7 +204,7 @@ resource "kubernetes_namespace" "create_namespace" {
     name = var.create_namespace
   }
   # Adding dependancy on the node pool so that destroy works properly
-  depends_on: [
+  depends_on = [
     google_container_node_pool.primary_pool
   ]
 }
