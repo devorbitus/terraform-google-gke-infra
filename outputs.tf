@@ -62,6 +62,10 @@ output "created_namespace" {
   value = kubernetes_namespace.create_namespace
 }
 
+output "created_nodepool" {
+  value = google_container_node_pool.primary_pool
+}
+
 # Render Kubeconfig output template
 locals {
   legacy_kubeconfig = <<KUBECONFIG
