@@ -207,4 +207,8 @@ resource "kubernetes_namespace" "create_namespace" {
   depends_on = [
     google_container_node_pool.primary_pool
   ]
+  
+  timeouts {
+    delete = "15m"
+  }
 }
