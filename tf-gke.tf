@@ -209,6 +209,6 @@ resource "kubernetes_namespace" "create_namespace" {
   ]
   
   timeouts {
-    delete = "15m"
+    delete = "30m"
   }
 }
