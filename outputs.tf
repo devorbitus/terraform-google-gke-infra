@@ -55,7 +55,7 @@ output "service_account_key" {
 }
 
 output "cloud_nat_adddress" {
-  value = (var.private_cluster && var.cloud_nat && var.cloud_nat_address_name != "") ? google_compute_address.nat[0].address : data.google_compute_address.existing_nat[0].address
+  value = (var.private_cluster && var.cloud_nat && var.cloud_nat_address_name == "") ? google_compute_address.nat[0].address : data.google_compute_address.existing_nat[0].address
 }
 
 output "created_namespace" {
