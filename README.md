@@ -176,6 +176,7 @@ For more info, please see the [variables file](variables-main.tf).
 | `cloud_nat` | Whether or not to enable Cloud NAT. This is to retain compatability with clusters that use the old NAT Gateway module. | `true` |
 | `nat_bgp_asn` | Local BGP Autonomous System Number (ASN) for the NAT router. | `64514` |
 | `create_namespace` | Kubernetes Namespace to create if given and different than default. | `default`|
+| `crypto_key_id` | This is the Google KMS key to use to encrypt/decrypt secrets in the form of projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME] | `""`|
 
 ### Optional List Variables
 | Variable                 | Description                            | Default                                               |

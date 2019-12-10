@@ -34,7 +34,7 @@ resource "google_container_cluster" "cluster" {
   enable_legacy_abac          = var.enable_legacy_kubeconfig
   logging_service             = var.k8s_options["logging_service"]
   #node_version                = var.node_version == "" ? data.google_container_engine_versions.node.latest_node_version : var.node_version
-  min_master_version          = var.k8s_version == "" ? data.google_container_engine_versions.master.latest_master_version : var.k8s_version
+  min_master_version = var.k8s_version == "" ? data.google_container_engine_versions.master.latest_master_version : var.k8s_version
   master_authorized_networks_config {
     dynamic "cidr_blocks" {
       for_each = local.auth_list
@@ -124,6 +124,11 @@ resource "google_container_cluster" "cluster" {
     }
   }
 
+  database_encryption {
+    state    = var.crypto_key_id == "" ? "DECRYPTED" : "ENCRYPTED"
+    key_name = var.crypto_key_id
+  }
+
   timeouts {
     create = var.timeouts["create"]
     update = var.timeouts["update"]
@@ -198,7 +203,7 @@ provider "kubernetes" {
 }
 
 resource "kubernetes_namespace" "create_namespace" {
-  count = var.create_namespace != "default" ? 1 : 0
+  count    = var.create_namespace != "default" ? 1 : 0
   provider = kubernetes.innermodule
   metadata {
     name = var.create_namespace
@@ -207,7 +212,7 @@ resource "kubernetes_namespace" "create_namespace" {
   depends_on = [
     google_container_node_pool.primary_pool
   ]
-  
+
   timeouts {
     delete = "30m"
   }

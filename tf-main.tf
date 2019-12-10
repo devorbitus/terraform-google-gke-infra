@@ -47,6 +47,13 @@ resource "google_service_account" "sa" {
   project      = var.project
 }
 
+resource "google_kms_crypto_key_iam_member" "gke_sa_iam_kms" {
+  count         = var.crypto_key_id != "" ? 1 : 0
+  crypto_key_id = var.crypto_key_id
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+  member        = "serviceAccount:${var.service_account == "" ? google_service_account.sa[0].email : var.service_account}"
+}
+
 # Create a Service Account key by default
 resource "google_service_account_key" "sa_key" {
   count              = var.service_account == "" ? 1 : 0
