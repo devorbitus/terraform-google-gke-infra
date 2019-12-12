@@ -134,6 +134,10 @@ resource "google_container_cluster" "cluster" {
     update = var.timeouts["update"]
     delete = var.timeouts["delete"]
   }
+
+  depends_on = [
+      google_kms_crypto_key_iam_member.gke_sa_iam_kms
+  ]
 }
 
 resource "google_container_node_pool" "primary_pool" {
