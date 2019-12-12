@@ -104,3 +104,8 @@ variable "crypto_key_id" {
   description = "This is the Google KMS key to use to encrypt/decrypt secrets in the form of projects/[KEY_PROJECT_ID]/locations/[LOCATION]/keyRings/[RING_NAME]/cryptoKeys/[KEY_NAME]"
   default     = ""
 }
+
+variable "use_database_encryption" {
+  type        = bool
+  default     = false
+}

@@ -48,7 +48,7 @@ resource "google_service_account" "sa" {
 }
 
 resource "google_kms_crypto_key_iam_member" "gke_sa_iam_kms" {
-  count         = var.crypto_key_id != "" ? 1 : 0
+  count         = var.use_database_encryption ? 1 : 0
   crypto_key_id = var.crypto_key_id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
   member        = "serviceAccount:${var.service_account == "" ? google_service_account.sa[0].email : var.service_account}"
