@@ -50,7 +50,7 @@ resource "google_service_account" "sa" {
 resource "google_kms_crypto_key_iam_member" "gke_sa_iam_kms" {
   crypto_key_id = var.crypto_key_id
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
-  member        = "serviceAccount:${var.service_account == "" ? google_service_account.sa[0].email : var.service_account}"
+  member        = "serviceAccount:service-${data.google_project.project.number}@container-engine-robot.iam.gserviceaccount.com"
 }
 
 # Create a Service Account key by default
