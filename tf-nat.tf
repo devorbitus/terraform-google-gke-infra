@@ -7,7 +7,7 @@ resource "google_compute_address" "nat" {
 }
 
 data "google_compute_address" "existing_nat" {
-  count . = var.cloud_nat_address_name != "" ? 1 : 0
+  count   = var.cloud_nat_address_name != "" ? 1 : 0
   name    = var.cloud_nat_address_name
   region  = var.region
 }
